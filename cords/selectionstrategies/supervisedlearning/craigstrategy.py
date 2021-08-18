@@ -126,7 +126,8 @@ class CRAIGStrategy(DataSelectionStrategy):
                     g_is.append(inputs.view(inputs.size()[0], -1))
         else:
             embDim = self.model.get_embedding_dim()
-            for batch_idx, (inputs, targets) in enumerate(subset_loader):
+            for batch_idx, subsetData in enumerate(subset_loader):
+                inputs, targets = subsetData['image'], subsetData['label']
                 inputs, targets = inputs.to(self.device), targets.to(self.device, non_blocking=True)
                 if self.selection_type == 'PerBatch':
                     self.N += 1
@@ -240,7 +241,8 @@ class CRAIGStrategy(DataSelectionStrategy):
             List containing gradients of datapoints present in greedySet
         """
 
-        for batch_idx, (inputs, targets) in enumerate(self.trainloader):
+        for batch_idx, traindata in enumerate(self.trainloader):
+            inputs, targets = traindata['image'], traindata['label']
             if batch_idx == 0:
                 labels = targets
             else:
